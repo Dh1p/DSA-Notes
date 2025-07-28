@@ -14,12 +14,14 @@
       margin: 0;
       padding: 20px;
       text-align: center;
+      transition: background 0.3s ease, color 0.3s ease;
     }
     h1 {
       color: #1565c0;
       font-weight: 700;
       font-size: 2.5rem;
       margin-bottom: 1rem;
+      transition: color 0.3s ease;
     }
     .back-link {
       display: inline-block;
@@ -29,7 +31,7 @@
       font-weight: 600;
       font-size: 1.1rem;
       border-bottom: 2px solid transparent;
-      transition: border-color 0.25s ease;
+      transition: border-color 0.25s ease, color 0.3s ease;
       user-select: none;
     }
     .back-link:hover {
@@ -43,47 +45,122 @@
       margin: 20px auto;
       box-shadow: 0 0 15px rgba(0,0,0,0.12);
       border-radius: 10px;
-      transition: transform 0.25s ease;
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
     }
     img:hover {
       transform: scale(1.03);
       box-shadow: 0 0 25px rgba(0,0,0,0.25);
     }
+    #loader {
+      font-weight: 600;
+      color: #1565c0;
+      margin: 30px 0;
+      transition: color 0.3s ease;
+    }
+    /* Dark Mode styles */
+    body.dark-mode {
+      background: #121212;
+      color: #eee;
+    }
+    body.dark-mode h1 {
+      color: #90caf9;
+    }
+    body.dark-mode .back-link {
+      color: #90caf9;
+    }
+    body.dark-mode .back-link:hover {
+      border-color: #90caf9;
+    }
+    body.dark-mode #loader {
+      color: #90caf9;
+    }
+    body.dark-mode img {
+      box-shadow: 0 0 15px rgba(255,255,255,0.15);
+    }
+    body.dark-mode img:hover {
+      box-shadow: 0 0 25px rgba(255,255,255,0.3);
+    }
+    /* Dark mode toggle button */
+    #dark-mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #1565c0;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(21,101,192,0.6);
+      transition: background 0.3s ease;
+      user-select: none;
+      z-index: 1000;
+    }
+    #dark-mode-toggle:hover {
+      background: #0d3c70;
+    }
   </style>
 </head>
 <body>
+  <button id="dark-mode-toggle">🌙 Dark Mode</button>
+
   <a href="../index.html" class="back-link">⬅ Back to Home</a>
   <h1>🔗 Linked List Notes</h1>
-  <!-- Add your images below -->
-  <img src="linkedlist1.jpg" alt="Linked List Note 1" />
-  <img src="linkedlist2.jpg" alt="Linked List Note 2" />
-  <img src="linkedlist3.jpg" alt="Linked List Note 3" />
-  <img src="linkedlist4.jpg" alt="Linked List Note 4" />
-  <img src="linkedlist5.jpg" alt="Linked List Note 5" />
-  <img src="linkedlist6.jpg" alt="Linked List Note 6" />
-  <img src="linkedlist7.jpg" alt="Linked List Note 7" />
-  <img src="linkedlist8.jpg" alt="Linked List Note 8" />
-  <img src="linkedlist9.jpg" alt="Linked List Note 9" />
-  <img src="linkedlist10.jpg" alt="Linked List Note 10" />
-  <img src="linkedlist11.jpg" alt="Linked List Note 11" />
-  <img src="linkedlist12.jpg" alt="Linked List Note 12" />
-  <img src="linkedlist13.jpg" alt="Linked List Note 13" />
-  <img src="linkedlist14.jpg" alt="Linked List Note 14" />
-  <img src="linkedlist15.jpg" alt="Linked List Note 15" />
-  <img src="linkedlist16.jpg" alt="Linked List Note 16" />
-  <img src="linkedlist17.jpg" alt="Linked List Note 17" />
-  <img src="linkedlist18.jpg" alt="Linked List Note 18" />
-  <img src="linkedlist19.jpg" alt="Linked List Note 19" />
-  <img src="linkedlist20.jpg" alt="Linked List Note 20" />
-  <img src="linkedlist21.jpg" alt="Linked List Note 21" />
-  <img src="linkedlist22.jpg" alt="Linked List Note 22" />
-  <img src="linkedlist23.jpg" alt="Linked List Note 23" />
-  <img src="linkedlist24.jpg" alt="Linked List Note 24" />
-  <img src="linkedlist25.jpg" alt="Linked List Note 25" />
-  <img src="linkedlist26.jpg" alt="Linked List Note 26" />
-  <img src="linkedlist27.jpg" alt="Linked List Note 27" />
-  <img src="linkedlist28.jpg" alt="Linked List Note 28" />
-  <img src="linkedlist29.jpg" alt="Linked List Note 29" />
-  <img src="linkedlist30.jpg" alt="Linked List Note 30" />
+
+  <div id="image-container"></div>
+  <div id="loader">Loading...</div>
+
+  <script>
+    const imageList = [];
+    for (let i = 1; i <= 30; i++) {
+      imageList.push(`linkedlist${i}.jpg`);
+    }
+
+    let loaded = 0;
+    const batchSize = 10;
+
+    function loadImages() {
+      const container = document.getElementById('image-container');
+      const end = Math.min(loaded + batchSize, imageList.length);
+
+      for (let i = loaded; i < end; i++) {
+        const img = document.createElement('img');
+        img.src = imageList[i];
+        img.loading = 'lazy';
+        img.alt = `Linked List Note ${i + 1}`;
+        container.appendChild(img);
+      }
+
+      loaded = end;
+
+      if (loaded >= imageList.length) {
+        document.getElementById('loader').innerText = "All notes loaded.";
+        window.removeEventListener('scroll', scrollHandler);
+      }
+    }
+
+    function scrollHandler() {
+      const loader = document.getElementById('loader');
+      if (loader.getBoundingClientRect().top < window.innerHeight) {
+        loadImages();
+      }
+    }
+
+    window.addEventListener('scroll', scrollHandler);
+    loadImages();
+
+    // Dark mode toggle logic
+    const toggleBtn = document.getElementById('dark-mode-toggle');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+
+      if (document.body.classList.contains('dark-mode')) {
+        toggleBtn.textContent = '☀️ Light Mode';
+      } else {
+        toggleBtn.textContent = '🌙 Dark Mode';
+      }
+    });
+  </script>
 </body>
 </html>
